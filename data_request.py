@@ -78,11 +78,12 @@ class DataRequest:
             elif methodHTTP == "POST":
                 response = requests.post(url, data=payload, headers=headers)
 
-            if response != None and response.status_code < 400:
-                return response.json()
+            if response != None:
+                data = response.json()
+                data["status"] = response.status_code
+                return data
             else:
-                raise Exception("Request failed with code : " +
-                                str(response.status_code)+" and error is "+response.text)
+                raise Exception("No reponse")
         except Exception as e:
             raise Exception(
                 "Request cannot be made. Connection cannot be set. Max retries failed")
