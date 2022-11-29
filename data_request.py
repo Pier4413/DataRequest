@@ -17,41 +17,31 @@ class DataRequest:
     :version: 1.0
 """
 
-    def __init__(self, api_key: str) -> None:
+    @property
+    def api_key(self) -> str:
+        return None
+    
+    @api_key.setter
+    def api_key(self, value : str) -> None:
+        self.__api_key = value
+    
+
+    def __init__(self, api_key: str, uri: str) -> None:
         """
                 Constructor
 
                 :param api_key: API Key
                 :type api_key: str
+                :param uri: Website URI
+                :type uri: str
         """
-        self.__setApiKey(api_key)
+        self.api_key = api_key
+        self.uri = uri
 
-    def __setApiKey(self, api_key: str) -> None:
-        """
-                API Key setter
-
-                :param api_key: API Key
-                :type api_key: str
-                :meta private:
-        """
-        self.__api_key = api_key
-
-    def __getApiKey(self) -> str:
-        """
-                API Key getter
-
-                :returns: API's key
-                :rtype: str
-                :meta private:
-        """
-        return self.__api_key
-
-    def __makeRequest(self, uri: str, url: str, getParams: str = None, payload: str = None, methodHTTP: str = "GET") -> Any:
+    def __makeRequest(self, url: str, getParams: str = None, payload: str = None, methodHTTP: str = "GET") -> Any:
         """
                 This method do the HTTP REST API calls
 
-                :param uri: Website URI
-                :type uri: str
                 :param url: Access route on the server
                 :type url: str
                 :param getParams: GET parameters
@@ -63,16 +53,16 @@ class DataRequest:
                 :raise Exception: An exception if the result of the request is >= 400
                 :meta private:
         """
-        url = uri+"/"+url
+        url = self.uri+"/"+url
 
         if(getParams):
             url = url + "?"+getParams
 
         headers = {'Content-type': 'application/json',
                    'Accept': 'text/plain'}
-                   
-        if self.__getApiKey() is not None:
-            headers['api_key'] = self.__getApiKey()
+
+        if self.__api_key is not None:
+            headers['api_key'] = self.__api_key
         
         response = None
 
@@ -102,12 +92,10 @@ class DataRequest:
         """
         return json.dumps(params)
 
-    def makeRequest(self, uri: str, url: str, getParams: str = None, params: dict = {}, methodHTTP: str = "GET") -> Any:
+    def makeRequest(self, url: str, getParams: str = None, params: dict = {}, methodHTTP: str = "GET") -> Any:
         """
                 This request is the exposed part to make the request
 
-                :param uri: API's URI
-                :type uri: str
                 :param url: API's route
                 :type url: str
                 :param getParams: Optional; Default : ""; The GET parameters if needed
@@ -123,6 +111,6 @@ class DataRequest:
         """
         try:
             payload = self.__createConnectionPayload(params)
-            return self.__makeRequest(uri=uri, url=url, getParams=getParams, payload=payload, methodHTTP=methodHTTP)
+            return self.__makeRequest(url=url, getParams=getParams, payload=payload, methodHTTP=methodHTTP)
         except Exception as e:
             raise e
