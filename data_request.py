@@ -69,7 +69,11 @@ class DataRequest:
             url = url + "?"+getParams
 
         headers = {'Content-type': 'application/json',
-                   'Accept': 'text/plain', 'api_key': self.__getApiKey()}
+                   'Accept': 'text/plain'}
+                   
+        if self.__getApiKey() is not None:
+            headers['api_key'] = self.__getApiKey()
+        
         response = None
 
         try:
