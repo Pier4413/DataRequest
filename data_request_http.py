@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 # On importe les librairies nécessaires
 import json
 import requests
@@ -15,43 +13,34 @@ class DataRequestHTTP(DataRequest):
     :author: Panda <panda@delmasweb.net>
     :date: 30 Août 2021
     :version: 1.0
-"""
-
-    @property
-    def api_key(self) -> str:
-        return None
-    
-    @api_key.setter
-    def api_key(self, value : str) -> None:
-        self.__api_key = value
-    
+    """ 
 
     def __init__(self, api_key: str, uri: str) -> None:
         """
-                Constructor
+            Constructor
 
-                :param api_key: API Key
-                :type api_key: str
-                :param uri: Website URI
-                :type uri: str
+            :param api_key: API Key
+            :type api_key: str
+            :param uri: Website URI
+            :type uri: str
         """
         self.api_key = api_key
         self.uri = uri
 
     def __makeRequest(self, url: str, getParams: str = None, payload: str = None, methodHTTP: str = "GET") -> Any:
         """
-                This method do the HTTP REST API calls
+            This method do the HTTP REST API calls
 
-                :param url: Access route on the server
-                :type url: str
-                :param getParams: GET parameters
-                :type getParams: str
-                :param payload: A JSON serialized object (see json.dumps)
-                :type payload: str
-                :param methodHTTP: HTTP Method (i.e GET or POST)
-                :type methodHTTP: str
-                :raise Exception: An exception if the result of the request is >= 400
-                :meta private:
+            :param url: Access route on the server
+            :type url: str
+            :param getParams: GET parameters
+            :type getParams: str
+            :param payload: A JSON serialized object (see json.dumps)
+            :type payload: str
+            :param methodHTTP: HTTP Method (i.e GET or POST)
+            :type methodHTTP: str
+            :raise Exception: An exception if the result of the request is >= 400
+            :meta private:
         """
         url = self.uri+"/"+url
 
@@ -61,14 +50,14 @@ class DataRequestHTTP(DataRequest):
         headers = {'Content-type': 'application/json',
                    'Accept': 'text/plain'}
 
-        if self.__api_key is not None:
-            headers['api_key'] = self.__api_key
+        if self.api_key is not None:
+            headers['Api-Key'] = self.api_key
         
         response = None
 
         try:
             if methodHTTP == "GET":
-                response = requests.get(url)
+                response = requests.get(url, headers=headers)
             elif methodHTTP == "POST":
                 response = requests.post(url, data=payload, headers=headers)
 
