@@ -68,8 +68,7 @@ class DataRequestHTTP(DataRequest):
             else:
                 raise Exception("No reponse")
         except Exception as e:
-            raise Exception(
-                "Request cannot be made. Connection cannot be set. Max retries failed")
+            raise Exception(f"Request cannot be made. Connection cannot be set. Exception is {e}")
 
     def __createConnectionPayload(self, params: dict) -> str:
         """
