@@ -1,1 +1,2 @@
+-i https://hera.delmasweb.net/simple --trusted-host hera.delmasweb.net
 requests
