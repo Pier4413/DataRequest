@@ -35,7 +35,7 @@ jobs:
           rm -rf *.egg-info
 
       - name: Build package
-        run: python setup.py sdist
+        run: python -m build
 
       - name: Upload package to custom repository
         env:
