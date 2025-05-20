@@ -16,4 +16,4 @@ keywords = ["http", "request", "api"]
 urls = { Homepage = "https://github.com/Pier4413/DataRequest" }
 
 [tool.setuptools.packages.find]
-where = ["data_request"]
+where = ["."]
