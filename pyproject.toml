@@ -12,6 +12,7 @@ authors = [
 dependencies = [
     "requests"
 ]
+requires-python = ">=3.12"
 keywords = ["http", "request", "api"]
 urls = { Homepage = "https://github.com/Pier4413/DataRequest" }
 
