@@ -1,0 +1,6 @@
+pip
+setuptools
+wheel
+twine
+build
+theophanie_models
