@@ -10,7 +10,8 @@ authors = [
     { name = "Panda", email = "panda@delmasweb.net" }
 ]
 dependencies = [
-    "requests"
+    "requests",
+    "theophanie_models"
 ]
 requires-python = ">=3.12"
 keywords = ["http", "request", "api"]
