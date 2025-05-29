@@ -13,7 +13,7 @@ dependencies = [
     "requests",
     "theophanie_models"
 ]
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 keywords = ["http", "request", "api"]
 urls = { Homepage = "https://github.com/Pier4413/DataRequest" }
 
