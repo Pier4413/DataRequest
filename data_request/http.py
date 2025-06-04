@@ -8,7 +8,6 @@ class HTTPMethod(Enum):
     GET = "GET"
     POST = "POST"
 
-
 class HTTP:
     """
     Classe permettant de faire des requêtes HTTP vers une API avec authentification par clé API.

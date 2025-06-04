@@ -4,3 +4,4 @@ wheel
 twine
 build
 theophanie_models
+pytest
