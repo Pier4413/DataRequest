@@ -3,6 +3,8 @@ import requests
 from enum import Enum
 from typing import Optional
 from urllib.parse import urljoin
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 class HTTPMethod(Enum):
     GET = "GET"
@@ -17,7 +19,7 @@ class HTTP:
     :version: 1.1
     """
 
-    def __init__(self, api_key: str, host: str, port: str, is_ssl: bool = False) -> None:
+    def __init__(self, api_key: str, host: str, port: str, is_ssl: bool = False, max_retries: int = 1) -> None:
         """
         Initialise le client HTTP.
 
@@ -33,6 +35,21 @@ class HTTP:
         protocol = "https" if is_ssl else "http"
         self.api_key = api_key
         self.base_url = f"{protocol}://{host}:{port}"
+
+        self.session = requests.Session()
+
+        retries = Retry(
+            total=max_retries,
+            connect=max_retries,
+            read=max_retries,
+            status=max_retries,
+            allowed_methods=["GET", "HEAD", "POST"],
+            status_forcelist=[500, 502, 503, 504],
+            backoff_factor=0.0
+        )
+
+        adapter = HTTPAdapter(max_retries=retries)
+        self.session.mount(f"{protocol}://", adapter)
 
     def __make_request(
         self,
@@ -67,9 +84,9 @@ class HTTP:
         try:
             match http_method:
                 case HTTPMethod.GET:
-                    response = requests.get(url, headers=headers, params=query_params)
+                    response = self.session.get(url, headers=headers, params=query_params)
                 case HTTPMethod.POST:
-                    response = requests.post(url, headers=headers, params=query_params, data=payload)
+                    response = self.session.post(url, headers=headers, params=query_params, data=payload)
                 case _:
                     raise ValueError(f"Méthode HTTP non supportée : {http_method}")
 
