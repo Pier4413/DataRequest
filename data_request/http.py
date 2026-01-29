@@ -39,6 +39,7 @@ class HTTP:
         protocol = "https" if is_ssl else "http"
         self.api_key = api_key
         self.base_url = f"{protocol}://{host}:{port}"
+        self.timeout_ms = timeout_ms
 
         self.session = requests.Session()
 
@@ -49,8 +50,7 @@ class HTTP:
             status=max_retries,
             allowed_methods=["GET", "HEAD", "POST"],
             status_forcelist=[500, 502, 503, 504],
-            backoff_factor=0.0,
-            timeout_ms=timeout_ms
+            backoff_factor=0.0
         )
 
         adapter = HTTPAdapter(max_retries=retries)
@@ -89,9 +89,9 @@ class HTTP:
         try:
             match http_method:
                 case HTTPMethod.GET:
-                    response = self.session.get(url, headers=headers, params=query_params)
+                    response = self.session.get(url, headers=headers, params=query_params, timeout=self.timeout_ms/1000.0)
                 case HTTPMethod.POST:
-                    response = self.session.post(url, headers=headers, params=query_params, data=payload)
+                    response = self.session.post(url, headers=headers, params=query_params, data=payload, timeout=self.timeout_ms/1000.0)
                 case _:
                     raise ValueError(f"Méthode HTTP non supportée : {http_method}")
 
