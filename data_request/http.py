@@ -19,18 +19,22 @@ class HTTP:
     :version: 1.1
     """
 
-    def __init__(self, api_key: str, host: str, port: str, is_ssl: bool = False, max_retries: int = 1) -> None:
+    def __init__(self, api_key: str, host: str, port: str, is_ssl: bool = False, max_retries: int = 1, timeout_ms: int = 500) -> None:
         """
-        Initialise le client HTTP.
+        Initialize the HTTP client.
 
-        :param api_key: Clé API pour l'authentification
+        :param api_key: API Key for authentication
         :type api_key: str
-        :param host: Nom d'hôte du serveur
+        :param host: Server hostname
         :type host: str
-        :param port: Port de connexion de l'API
+        :param port: Server port
         :type port: str
-        :param is_ssl: True pour utiliser HTTPS, False pour HTTP
+        :param is_ssl: True for HTTPS, False for HTTP
         :type is_ssl: bool
+        :param max_retries: The maximum number of retries to allow to a connection
+        :type max_retries: int
+        :param timeout_ms: The timeout in ms to a connection
+        :type timeout_ms: int
         """
         protocol = "https" if is_ssl else "http"
         self.api_key = api_key
@@ -45,7 +49,8 @@ class HTTP:
             status=max_retries,
             allowed_methods=["GET", "HEAD", "POST"],
             status_forcelist=[500, 502, 503, 504],
-            backoff_factor=0.0
+            backoff_factor=0.0,
+            timeout_ms=timeout_ms
         )
 
         adapter = HTTPAdapter(max_retries=retries)
@@ -59,19 +64,19 @@ class HTTP:
         http_method: HTTPMethod = HTTPMethod.GET
     ) -> dict:
         """
-        Effectue la requête HTTP.
+        Do the HTTP request
 
-        :param path: Chemin de l'endpoint (ex : "/api/status")
+        :param path: Endpoint path (ex : "/api/status")
         :type path: str
-        :param query_params: Paramètres à inclure dans l'URL
+        :param query_params: Parameters to include in the URI
         :type query_params: dict or None
-        :param payload: Corps de la requête (JSON encodé en chaîne)
+        :param payload: Request body (JSON encodé en chaîne)
         :type payload: str or None
-        :param http_method: Méthode HTTP à utiliser
+        :param http_method: HTTP Method to use (warning GET doesn't support a body)
         :type http_method: HTTPMethod
-        :return: Réponse de l’API sous forme de dictionnaire avec un champ "status"
+        :return: API response with a status code
         :rtype: dict
-        :raises Exception: En cas d’erreur réseau ou de réponse invalide
+        :raises Exception: In case of network error or no response
         """
         url = urljoin(self.base_url + "/", path.lstrip("/"))
 
@@ -100,11 +105,11 @@ class HTTP:
 
     def create_payload(self, payload_dict: dict) -> str:
         """
-        Sérialise un dictionnaire en chaîne JSON.
+        Parse a dict into a usable JSON for a body
 
-        :param payload_dict: Dictionnaire à convertir en JSON
+        :param payload_dict: Dict to convert
         :type payload_dict: dict
-        :return: Représentation JSON sous forme de chaîne
+        :return: JSON representation a string
         :rtype: str
         """
         return json.dumps(payload_dict)
@@ -117,15 +122,15 @@ class HTTP:
         http_method: HTTPMethod = HTTPMethod.GET
     ) -> dict:
         """
-        Envoie une requête HTTP à l’API avec ou sans charge utile.
+        Send a request to the API with or without a payload.
 
-        :param path: Chemin de l’endpoint
+        :param path: Endpoint path (ex : "/api/status")
         :type path: str
-        :param query_params: Paramètres à inclure dans l’URL
+        :param query_params: Parameters to include in the URI
         :type query_params: dict or None
-        :param payload_dict: Dictionnaire à envoyer dans le corps de la requête
-        :type payload_dict: dict or None
-        :param http_method: Méthode HTTP à utiliser
+        :param payload_dict: Request body (JSON encodé en chaîne)
+        :type payload: dict or None
+        :param http_method: HTTP Method to use (warning GET doesn't support a payload)
         :type http_method: HTTPMethod
         :return: Réponse de l’API enrichie d’un champ "status"
         :rtype: dict
