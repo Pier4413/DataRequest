@@ -8,7 +8,7 @@ class TestHTTP(unittest.TestCase):
     def setUp(self):
         self.client = HTTP(api_key="fake-key", host="example.com", port="80", is_ssl=False)
 
-    @patch("requests.get")
+    @patch("requests.Session.get")
     def test_get_success(self, mock_get):
         mock_response = Mock()
         mock_response.status_code = 200
@@ -21,7 +21,7 @@ class TestHTTP(unittest.TestCase):
         self.assertEqual(result["status"], 200)
         mock_get.assert_called_once()
 
-    @patch("requests.post")
+    @patch("requests.Session.post")
     def test_post_success_with_payload(self, mock_post):
         mock_response = Mock()
         mock_response.status_code = 201
